@@ -30,6 +30,15 @@ lexer_read_char :: proc(lexer: ^Lexer) {
 	lexer.read_position += 1
 }
 
+// Similar to lexer_read_char, except that it doesn't increment lexer.position
+lexer_peek_char :: proc(lexer: ^Lexer) -> byte {
+	if lexer.read_position >= len(lexer.input) {
+		return 0 // ASCII code for NUL
+	} else {
+		return lexer.input[lexer.read_position]
+	}
+}
+
 lexer_next_token :: proc(lexer: ^Lexer) -> Token {
 	tok: Token
 
@@ -37,11 +46,21 @@ lexer_next_token :: proc(lexer: ^Lexer) -> Token {
 
 	switch lexer.ch {
 	case '=':
-		tok = Token{.Assign, "="}
+		if lexer_peek_char(lexer) == '=' {
+			lexer_read_char(lexer)
+			tok = Token{.Eq, "=="}
+		} else {
+			tok = Token{.Assign, "="}
+		}
 	case '-':
 		tok = Token{.Minus, "-"}
 	case '!':
-		tok = Token{.Bang, "!"}
+		if lexer_peek_char(lexer) == '=' {
+			lexer_read_char(lexer)
+			tok = Token{.Not_Eq, "!="}
+		} else {
+			tok = Token{.Bang, "!"}
+		}
 	case '/':
 		tok = Token{.Slash, "/"}
 	case '*':

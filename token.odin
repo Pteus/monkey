@@ -17,6 +17,8 @@ Token_Type :: enum {
 	Slash,
 	LT,
 	GT,
+	Eq,
+	Not_Eq,
 
 	// Delimiters
 	Comma,
@@ -28,6 +30,11 @@ Token_Type :: enum {
 	// Keywords
 	Function,
 	Let,
+	True,
+	False,
+	If,
+	Else,
+	Return,
 }
 
 Token :: struct {
@@ -36,8 +43,13 @@ Token :: struct {
 }
 
 keywords := map[string]Token_Type {
-	"fn"  = .Function,
-	"let" = .Let,
+	"fn"     = .Function,
+	"let"    = .Let,
+	"true"   = .True,
+	"false"  = .False,
+	"if"     = .If,
+	"else"   = .Else,
+	"return" = .Return,
 }
 
 // checks the keywords table to see whether the given identifier is in fact a keyword
