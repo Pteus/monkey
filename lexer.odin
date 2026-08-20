@@ -1,10 +1,12 @@
 package main
 
+
 Lexer :: struct {
 	input:         string,
 	position:      int, // current position in input (points to current char), ie char that was already read
 	read_position: int, // current reading position in input (after current char), ie next char
 	ch:            byte, // current char under examination
+	illegal_buf:   [1]byte, // stable storage — lives as long as the Lexer itself
 }
 
 lexer_make :: proc(input: string) -> Lexer {
@@ -35,23 +37,35 @@ lexer_next_token :: proc(lexer: ^Lexer) -> Token {
 
 	switch lexer.ch {
 	case '=':
-		tok = Token{.ASSIGN, "="}
+		tok = Token{.Assign, "="}
+	case '-':
+		tok = Token{.Minus, "-"}
+	case '!':
+		tok = Token{.Bang, "!"}
+	case '/':
+		tok = Token{.Slash, "/"}
+	case '*':
+		tok = Token{.Asterisk, "*"}
+	case '<':
+		tok = Token{.LT, "<"}
+	case '>':
+		tok = Token{.GT, ">"}
 	case ';':
-		tok = Token{.SEMICOLON, ";"}
+		tok = Token{.Semicolon, ";"}
 	case '(':
-		tok = Token{.LPAREN, "("}
+		tok = Token{.L_Paren, "("}
 	case ')':
-		tok = Token{.RPAREN, ")"}
+		tok = Token{.R_Paren, ")"}
 	case ',':
-		tok = Token{.COMMA, ","}
+		tok = Token{.Comma, ","}
 	case '+':
-		tok = Token{.PLUS, "+"}
+		tok = Token{.Plus, "+"}
 	case '{':
-		tok = Token{.LBRACE, "{"}
+		tok = Token{.L_Brace, "{"}
 	case '}':
-		tok = Token{.RBRACE, "}"}
+		tok = Token{.R_Brace, "}"}
 	case 0:
-		tok = Token{.EOF, ""}
+		tok = Token{.Eof, ""}
 	case:
 		if is_letter(lexer.ch) {
 			tok.literal = lexer_read_identifier(lexer)
@@ -59,10 +73,10 @@ lexer_next_token :: proc(lexer: ^Lexer) -> Token {
 			return tok
 		} else if is_digit(lexer.ch) {
 			tok.literal = lexer_read_number(lexer)
-			tok.type = .INT
+			tok.type = .Int
 			return tok
 		} else {
-			tok = Token{.ILLEGAL, string([]u8{lexer.ch})}
+			tok = Token{.Illegal, string([]u8{lexer.ch})} // probably doesnt work
 		}
 	}
 

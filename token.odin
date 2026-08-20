@@ -3,24 +3,31 @@
 package main
 
 Token_Type :: enum {
-	ILLEGAL,
-	EOF,
+	Illegal,
+	Eof,
 	// Identifiers + literals
-	IDENT, // add, foobar, x, y, ...
-	INT, // 1343456
+	Ident, // add, foobar, x, y, ...
+	Int, // 1343456
 	// Operators
-	ASSIGN,
-	PLUS,
+	Assign,
+	Plus,
+	Minus,
+	Bang,
+	Asterisk,
+	Slash,
+	LT,
+	GT,
+
 	// Delimiters
-	COMMA,
-	SEMICOLON,
-	LPAREN,
-	RPAREN,
-	LBRACE,
-	RBRACE,
+	Comma,
+	Semicolon,
+	L_Paren,
+	R_Paren,
+	L_Brace,
+	R_Brace,
 	// Keywords
-	FUNCTION,
-	LET,
+	Function,
+	Let,
 }
 
 Token :: struct {
@@ -29,8 +36,8 @@ Token :: struct {
 }
 
 keywords := map[string]Token_Type {
-	"fn"  = .FUNCTION,
-	"let" = .LET,
+	"fn"  = .Function,
+	"let" = .Let,
 }
 
 // checks the keywords table to see whether the given identifier is in fact a keyword
@@ -39,5 +46,5 @@ lookup_ident :: proc(ident: string) -> Token_Type {
 		return tok
 	}
 
-	return .IDENT
+	return .Ident
 }
